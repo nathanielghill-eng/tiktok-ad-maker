@@ -1,0 +1,1060 @@
+
+Output
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TikTok Ad Maker</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --red:#ff2d55;
+  --bg:#111;
+  --surface:#1c1c1c;
+  --surface2:#252525;
+  --border:rgba(255,255,255,0.1);
+  --text:#f0f0f0;
+  --text2:#999;
+  --text3:#555;
+  --green:#22c55e;
+  --danger:#ef4444;
+  --radius:10px;
+}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* HEADER */
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:.05em;color:var(--red);}
+.logo span{color:var(--text);}
+.key-row{display:flex;align-items:center;gap:10px;}
+.key-row label{font-size:12px;color:var(--text2);}
+.key-input{width:260px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:7px 11px;font-size:12px;color:var(--text);font-family:monospace;outline:none;}
+.key-input:focus{border-color:rgba(255,255,255,0.3);}
+.key-badge{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;}
+.key-badge.ok{background:rgba(34,197,94,0.15);color:var(--green);}
+.key-badge.no{background:rgba(255,45,85,0.15);color:var(--red);}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:1fr 360px;min-height:calc(100vh - 53px);}
+.left{padding:22px 24px;display:flex;flex-direction:column;gap:18px;overflow-y:auto;max-height:calc(100vh - 53px);}
+.right{background:var(--surface);border-left:1px solid var(--border);padding:22px 18px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;max-height:calc(100vh - 53px);}
+
+/* FORMS */
+.sl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);margin-bottom:6px;}
+textarea,input[type=text],select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;}
+textarea{resize:vertical;}
+textarea:focus,input[type=text]:focus,select:focus{border-color:rgba(255,255,255,0.3);}
+.row2{display:flex;gap:12px;}
+.row2 > div{flex:1;}
+
+/* CHIPS */
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.chip{border:1px solid var(--border);border-radius:var(--radius);padding:7px;font-size:11px;font-weight:500;text-align:center;cursor:pointer;background:var(--surface2);color:var(--text2);transition:all .15s;user-select:none;}
+.chip:hover{border-color:rgba(255,255,255,0.25);color:var(--text);}
+.chip.on{background:rgba(255,45,85,0.15);border-color:var(--red);color:var(--text);}
+
+/* MEDIA SLOTS */
+.media-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.mslot{aspect-ratio:9/16;border:1px dashed rgba(255,255,255,0.2);border-radius:var(--radius);background:var(--surface2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:border-color .2s;}
+.mslot:hover{border-color:rgba(255,255,255,0.4);}
+.mslot.has{border-style:solid;border-color:var(--red);}
+.mslot-lbl{font-size:9px;color:var(--text3);margin-top:4px;}
+.mslot-prev{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.mslot-rm{position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:rgba(0,0,0,0.7);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;}
+.mslot-tag{position:absolute;bottom:3px;left:3px;font-size:7px;font-weight:700;padding:2px 5px;border-radius:3px;background:var(--red);color:#fff;}
+
+/* BUTTONS */
+.btn-red{width:100%;padding:13px;border-radius:var(--radius);border:none;background:var(--red);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:.06em;cursor:pointer;transition:opacity .2s;}
+.btn-red:hover{opacity:0.85;}
+.btn-red:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-outline{padding:8px 12px;border-radius:var(--radius);border:1px solid var(--border);background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;}
+.btn-outline:hover{border-color:rgba(255,255,255,0.3);color:var(--text);}
+.btn-outline:disabled{opacity:0.4;pointer-events:none;}
+.btn-primary{width:100%;padding:11px;border-radius:var(--radius);border:none;background:var(--red);color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:opacity .2s;}
+.btn-primary:hover{opacity:0.85;}
+.btn-primary:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-ghost{width:100%;padding:10px;border-radius:var(--radius);border:1px solid var(--border);background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;}
+.btn-ghost:hover{background:var(--surface2);}
+.btn-ghost:disabled{opacity:0.4;cursor:not-allowed;}
+
+/* SCRIPT CARD */
+.scard{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:10px;}
+.scard-hdr{display:flex;align-items:center;justify-content:space-between;}
+.scard-title{font-size:13px;font-weight:500;}
+.scard-hint{font-size:10px;color:var(--text3);}
+.script-ta{min-height:105px;font-size:13px;line-height:1.6;}
+.script-ta:focus{border-color:var(--red) !important;}
+.s-actions{display:flex;gap:7px;}
+.divider{border:none;border-top:1px solid var(--border);}
+
+/* POLISH */
+.polish-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.pb{padding:11px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;flex-direction:column;gap:4px;transition:all .15s;position:relative;text-align:left;}
+.pb:hover{border-color:rgba(255,255,255,0.25);background:var(--surface2);}
+.pb.on{border-color:var(--red);background:rgba(255,45,85,0.07);}
+.pb.on::after{content:'✓';position:absolute;top:8px;right:9px;font-size:11px;font-weight:700;color:var(--red);}
+.pb-ico{font-size:15px;}
+.pb-ttl{font-size:11px;font-weight:600;color:var(--text);padding-right:16px;}
+.pb-dsc{font-size:10px;color:var(--text2);line-height:1.3;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;min-height:22px;}
+.tag{display:flex;align-items:center;gap:4px;padding:3px 9px;background:rgba(255,45,85,0.12);border:1px solid rgba(255,45,85,0.3);border-radius:20px;font-size:10px;font-weight:600;color:var(--red);}
+.tag-x{cursor:pointer;font-size:12px;opacity:0.7;}
+.tag-x:hover{opacity:1;}
+.pbar-wrap{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.pbar-fill{height:100%;background:var(--red);border-radius:2px;transition:width .4s;width:0%;}
+.ps{font-size:11px;text-align:center;min-height:15px;color:var(--text3);font-style:italic;}
+.ps.working{color:var(--red);font-style:normal;font-weight:500;}
+.ps.done{color:var(--green);font-style:normal;}
+
+/* HASHTAGS */
+.htags{display:flex;flex-wrap:wrap;gap:6px;}
+.htag{font-size:11px;font-weight:500;color:var(--red);background:rgba(255,45,85,0.1);border-radius:5px;padding:3px 8px;}
+
+/* ERROR */
+.err{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:var(--radius);padding:10px 13px;font-size:12px;color:var(--danger);line-height:1.5;}
+
+/* PHONE */
+.phone-wrap{display:flex;justify-content:center;}
+.phone{width:210px;height:420px;border-radius:32px;border:3px solid rgba(255,255,255,0.12);background:#000;position:relative;overflow:hidden;}
+.pscreen{width:100%;height:100%;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.pscene{position:absolute;inset:0;opacity:0;transition:opacity .4s ease;overflow:hidden;}
+.pscene.on{opacity:1;}
+.pscene-bg{position:absolute;inset:0;z-index:0;}
+.pscene-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
+.pscene-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.8) 0%,rgba(0,0,0,0.05) 60%);z-index:1;}
+.pscene-cnt{position:absolute;bottom:20px;left:0;right:0;padding:0 13px;z-index:2;}
+.pscene-tag{display:inline-block;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-bottom:5px;background:var(--red);color:#fff;}
+.pscene-title{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;line-height:1.1;margin-bottom:3px;}
+.pscene-body{font-size:9px;color:rgba(255,255,255,0.8);line-height:1.4;margin-bottom:7px;}
+.pscene-cta{display:inline-block;background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:4px 11px;border-radius:18px;}
+.ttu{position:absolute;right:7px;bottom:65px;z-index:10;display:flex;flex-direction:column;align-items:center;gap:9px;}
+.tti{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;}
+.pdots{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);display:flex;gap:4px;z-index:10;}
+.pdot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.3);transition:all .3s;}
+.pdot.on{background:var(--red);width:12px;border-radius:2px;}
+.pnum{position:absolute;top:10px;right:10px;font-size:8px;color:rgba(255,255,255,0.4);z-index:10;}
+.pidle{text-align:center;color:rgba(255,255,255,0.2);font-size:11px;padding:20px;line-height:1.7;}
+.pspin{width:24px;height:24px;border:3px solid rgba(255,45,85,0.3);border-top-color:var(--red);border-radius:50%;animation:spin .8s linear infinite;margin:auto;}
+
+/* VOICE */
+.vpanel{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:10px;}
+.srow{display:flex;align-items:center;gap:8px;}
+.srow label{font-size:11px;color:var(--text2);min-width:42px;}
+.srow input[type=range]{flex:1;accent-color:var(--red);}
+.srow span{font-size:11px;font-weight:500;min-width:28px;text-align:right;}
+.wf{display:flex;align-items:center;justify-content:center;gap:3px;height:20px;}
+.wb{width:3px;border-radius:2px;background:var(--red);animation:wave .8s ease-in-out infinite;}
+.wb:nth-child(1){height:5px;animation-delay:0s;}
+.wb:nth-child(2){height:10px;animation-delay:.1s;}
+.wb:nth-child(3){height:16px;animation-delay:.2s;}
+.wb:nth-child(4){height:10px;animation-delay:.3s;}
+.wb:nth-child(5){height:5px;animation-delay:.4s;}
+.vs{font-size:10px;color:var(--text3);text-align:center;min-height:14px;}
+
+/* EXPORT PROGRESS */
+.epwrap{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.epfill{height:100%;background:var(--red);width:0%;transition:width .3s;border-radius:2px;}
+
+/* SPINNER */
+.spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px;}
+.spin-red{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,45,85,0.3);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite;}
+
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes wave{0%,100%{transform:scaleY(1);}50%{transform:scaleY(1.7);}}
+
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">TikTok <span>Ad Maker</span></div>
+  <div class="key-row">
+    <label>API Key:</label>
+    <input type="password" class="key-input" id="apiKey" placeholder="sk-ant-..." oninput="checkKey()">
+    <span class="key-badge no" id="keyBadge">Not set</span>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- LEFT -->
+  <div class="left">
+
+    <div>
+      <div class="sl">Product details</div>
+      <textarea id="productDesc" rows="3" placeholder="Describe your product — what is it, who is it for, what makes it special?"></textarea>
+    </div>
+
+    <div class="row2">
+      <div>
+        <div class="sl">Product name</div>
+        <input type="text" id="productName" placeholder="e.g. GlowUp Serum">
+      </div>
+      <div>
+        <div class="sl">Target audience</div>
+        <input type="text" id="audience" placeholder="e.g. women 18-35">
+      </div>
+    </div>
+
+    <div>
+      <div class="sl">Ad vibe</div>
+      <div class="chips" id="vibeChips">
+        <div class="chip on" data-v="Energetic and hype">⚡ Hype</div>
+        <div class="chip" data-v="Minimal and clean">✦ Minimal</div>
+        <div class="chip" data-v="Bold and edgy">🔥 Bold</div>
+        <div class="chip" data-v="Natural and wholesome">🌿 Natural</div>
+        <div class="chip" data-v="Luxury and premium">💎 Luxury</div>
+        <div class="chip" data-v="Fun and playful">🎉 Fun</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sl">Media for scenes (optional — one per scene)</div>
+      <div class="media-grid">
+        <div class="mslot" id="ms0" onclick="trigFile(0)">
+          <svg width="18" height="18" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span class="mslot-lbl">Scene 1</span>
+        </div>
+        <div class="mslot" id="ms1" onclick="trigFile(1)">
+          <svg width="18" height="18" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span class="mslot-lbl">Scene 2</span>
+        </div>
+        <div class="mslot" id="ms2" onclick="trigFile(2)">
+          <svg width="18" height="18" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span class="mslot-lbl">Scene 3</span>
+        </div>
+        <div class="mslot" id="ms3" onclick="trigFile(3)">
+          <svg width="18" height="18" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span class="mslot-lbl">Scene 4</span>
+        </div>
+      </div>
+      <input type="file" id="mf0" style="display:none" accept="image/*,video/*" onchange="loadMedia(event,0)">
+      <input type="file" id="mf1" style="display:none" accept="image/*,video/*" onchange="loadMedia(event,1)">
+      <input type="file" id="mf2" style="display:none" accept="image/*,video/*" onchange="loadMedia(event,2)">
+      <input type="file" id="mf3" style="display:none" accept="image/*,video/*" onchange="loadMedia(event,3)">
+    </div>
+
+    <button class="btn-red" id="genBtn" onclick="generateAd()">GENERATE AD</button>
+
+    <div id="errWrap" style="display:none;">
+      <div class="err" id="errMsg"></div>
+    </div>
+
+    <div class="scard">
+      <div class="scard-hdr">
+        <span class="scard-title">Voiceover script</span>
+        <span class="scard-hint" id="charCnt">0 chars</span>
+      </div>
+      <textarea class="script-ta" id="scriptBox" placeholder="Type your own script here, or generate one above. Then use the AI polish tools below to make it sound natural." oninput="onScriptInput()"></textarea>
+      <div class="s-actions">
+        <button class="btn-outline" onclick="clearScript()">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+          Clear
+        </button>
+        <button class="btn-outline" onclick="copyScript()">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy
+        </button>
+        <button class="btn-outline" id="undoBtn" onclick="undoScript()" disabled>
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+          Undo
+        </button>
+      </div>
+
+      <hr class="divider">
+
+      <div style="display:flex;flex-direction:column;gap:9px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:13px;font-weight:500;">AI script polish</span>
+          <span style="font-size:10px;color:var(--text3);">Select one or more, then apply</span>
+        </div>
+
+        <div class="polish-grid">
+          <div class="pb" data-pk="natural" onclick="togglePb(this)">
+            <span class="pb-ico">💬</span>
+            <span class="pb-ttl">Natural flow</span>
+            <span class="pb-dsc">Sounds like a real person talking</span>
+          </div>
+          <div class="pb" data-pk="punchy" onclick="togglePb(this)">
+            <span class="pb-ico">⚡</span>
+            <span class="pb-ttl">Make it punchy</span>
+            <span class="pb-dsc">Short sharp sentences, more impact</span>
+          </div>
+          <div class="pb" data-pk="story" onclick="togglePb(this)">
+            <span class="pb-ico">📖</span>
+            <span class="pb-ttl">Tell a story</span>
+            <span class="pb-dsc">Problem to solution arc</span>
+          </div>
+          <div class="pb" data-pk="hook" onclick="togglePb(this)">
+            <span class="pb-ico">🎣</span>
+            <span class="pb-ttl">Stronger hook</span>
+            <span class="pb-dsc">Stop-the-scroll opening line</span>
+          </div>
+          <div class="pb" data-pk="casual" onclick="togglePb(this)">
+            <span class="pb-ico">😊</span>
+            <span class="pb-ttl">Keep it casual</span>
+            <span class="pb-dsc">Warm like texting a friend</span>
+          </div>
+          <div class="pb" data-pk="urgency" onclick="togglePb(this)">
+            <span class="pb-ico">🔥</span>
+            <span class="pb-ttl">Add urgency</span>
+            <span class="pb-dsc">Creates FOMO, act now energy</span>
+          </div>
+        </div>
+
+        <div class="tags" id="tagRow">
+          <span style="font-size:10px;color:var(--text3);font-style:italic;">Tap cards above to select</span>
+        </div>
+
+        <div class="pbar-wrap" id="pbarWrap" style="display:none;">
+          <div class="pbar-fill" id="pbarFill"></div>
+        </div>
+
+        <button class="btn-primary" id="applyBtn" onclick="applyPolish()" disabled>
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          Apply selected polishes
+        </button>
+
+        <div class="ps" id="polishStatus"></div>
+      </div>
+    </div>
+
+    <div id="hashWrap" style="display:none;">
+      <div class="sl">Suggested hashtags</div>
+      <div class="htags" id="hashTags"></div>
+    </div>
+
+    <div style="height:30px;"></div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="pscreen" id="phoneScreen">
+          <div class="pidle">Your ad preview<br>will appear here<br><br><span style="font-size:10px;opacity:0.5;">Add your API key above<br>then hit Generate Ad</span></div>
+        </div>
+        <div class="ttu" id="ttu" style="display:none;">
+          <div class="tti">♡</div>
+          <div class="tti">💬</div>
+          <div class="tti">↗</div>
+        </div>
+        <div class="pdots" id="pdots" style="display:none;"></div>
+        <div class="pnum" id="pnum" style="display:none;"></div>
+      </div>
+    </div>
+
+    <div class="vpanel">
+      <div class="sl" style="margin-bottom:2px;">AI voice</div>
+      <select id="voiceSel" style="background:var(--surface);color:var(--text);border-color:var(--border);"></select>
+      <div class="srow">
+        <label>Speed</label>
+        <input type="range" id="rateSlider" min="0.5" max="2" step="0.1" value="1.1" oninput="document.getElementById('rateVal').textContent=parseFloat(this.value).toFixed(1)+'x'">
+        <span id="rateVal">1.1x</span>
+      </div>
+      <div class="srow">
+        <label>Pitch</label>
+        <input type="range" id="pitchSlider" min="0.5" max="2" step="0.1" value="1" oninput="document.getElementById('pitchVal').textContent=parseFloat(this.value).toFixed(1)">
+        <span id="pitchVal">1.0</span>
+      </div>
+      <div id="wfWrap" style="display:none;">
+        <div class="wf">
+          <div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div>
+        </div>
+      </div>
+      <button class="btn-primary" id="playBtn" onclick="playVoice()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        Play voiceover
+      </button>
+      <button class="btn-ghost" id="stopBtn" onclick="stopVoice()" style="display:none;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+        Stop
+      </button>
+      <div class="vs" id="voiceStat">Enter API key and generate an ad to get started</div>
+    </div>
+
+    <button class="btn-ghost" id="exportBtn" onclick="exportVideo()" disabled>
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export as video (.webm)
+    </button>
+    <div class="epwrap" id="epWrap" style="display:none;"><div class="epfill" id="epFill"></div></div>
+
+  </div>
+</div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
+var adVibe = 'Energetic and hype';
+var scenes = [];
+var curScene = 0;
+var sceneTimer = null;
+var mediaSlots = [null, null, null, null];
+var voices = [];
+var scriptHistory = [];
+var selectedPolishes = [];
+var synth = window.speechSynthesis;
+
+var bgColors = {
+  'Energetic and hype': '#1a0a2e',
+  'Minimal and clean': '#0a0a0a',
+  'Bold and edgy': '#1c0008',
+  'Natural and wholesome': '#0a1a0d',
+  'Luxury and premium': '#1a1500',
+  'Fun and playful': '#180a2e'
+};
+
+var polishPrompts = {
+  natural: 'Rewrite this TikTok ad voiceover so it sounds like a warm real person talking naturally — not a list of features. Use contractions and conversational rhythm. Keep it 40-60 words. Return ONLY the rewritten script, nothing else, no labels.',
+  punchy: 'Rewrite this TikTok ad voiceover to be short and punchy. Every sentence should hit hard. Cut all filler words. Keep it 30-50 words. Return ONLY the rewritten script, nothing else, no labels.',
+  story: 'Rewrite this TikTok ad voiceover as a short story: start with a relatable problem, introduce the product as the fix, end with a positive result. Keep it 50-65 words. Return ONLY the rewritten script, nothing else, no labels.',
+  hook: 'Keep the main body of this TikTok ad script but rewrite ONLY the first 1-2 sentences to be a hook that stops the scroll immediately. Total 40-60 words. Return ONLY the full rewritten script, nothing else, no labels.',
+  casual: 'Rewrite this TikTok ad voiceover to sound like you are excitedly telling a close friend about something amazing you found. Warm, genuine, zero corporate language. Keep it 40-60 words. Return ONLY the rewritten script, nothing else, no labels.',
+  urgency: 'Rewrite this TikTok ad voiceover to create strong urgency. Make the viewer feel they are missing out right now and must act today. Keep it 40-55 words. Return ONLY the rewritten script, nothing else, no labels.'
+};
+
+var polishLabels = {
+  natural: '💬 Natural flow',
+  punchy: '⚡ Punchy',
+  story: '📖 Story arc',
+  hook: '🎣 Stronger hook',
+  casual: '😊 Casual',
+  urgency: '🔥 Urgency'
+};
+
+// ─── API KEY ─────────────────────────────────────────────────────────────────
+function checkKey() {
+  var k = document.getElementById('apiKey').value.trim();
+  var badge = document.getElementById('keyBadge');
+  if (k.length > 20 && k.startsWith('sk-ant-')) {
+    badge.textContent = 'Key set ✓';
+    badge.className = 'key-badge ok';
+  } else {
+    badge.textContent = 'Not set';
+    badge.className = 'key-badge no';
+  }
+}
+
+function getKey() {
+  return document.getElementById('apiKey').value.trim();
+}
+
+// ─── CLAUDE API CALL ──────────────────────────────────────────────────────────
+function callClaude(systemMsg, userMsg, maxTokens, callback) {
+  var key = getKey();
+  if (!key || !key.startsWith('sk-ant-')) {
+    callback(null, 'Please enter your Anthropic API key at the top of the page. Get one free at console.anthropic.com');
+    return;
+  }
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', 'https://api.anthropic.com/v1/messages', true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader('x-api-key', key);
+  xhr.setRequestHeader('anthropic-version', '2023-06-01');
+
+  xhr.onload = function() {
+    try {
+      var data = JSON.parse(xhr.responseText);
+      if (xhr.status !== 200) {
+        var errMsg = (data.error && data.error.message) ? data.error.message : 'API error ' + xhr.status;
+        callback(null, errMsg);
+        return;
+      }
+      if (data.error) {
+        callback(null, data.error.message || 'API error');
+        return;
+      }
+      var text = '';
+      for (var i = 0; i < data.content.length; i++) {
+        if (data.content[i].text) text += data.content[i].text;
+      }
+      callback(text.trim(), null);
+    } catch (e) {
+      callback(null, 'Failed to parse response: ' + e.message);
+    }
+  };
+
+  xhr.onerror = function() {
+    callback(null, 'Network error — check your internet connection and that the API key is correct.');
+  };
+
+  xhr.ontimeout = function() {
+    callback(null, 'Request timed out. Try again.');
+  };
+
+  xhr.timeout = 30000;
+
+  var body = {
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: maxTokens,
+    system: systemMsg,
+    messages: [{ role: 'user', content: userMsg }]
+  };
+
+  xhr.send(JSON.stringify(body));
+}
+
+// ─── VIBE CHIPS ───────────────────────────────────────────────────────────────
+document.getElementById('vibeChips').addEventListener('click', function(e) {
+  var chip = e.target.closest('.chip');
+  if (!chip) return;
+  var chips = document.querySelectorAll('#vibeChips .chip');
+  for (var i = 0; i < chips.length; i++) chips[i].classList.remove('on');
+  chip.classList.add('on');
+  adVibe = chip.getAttribute('data-v');
+});
+
+// ─── VOICES ──────────────────────────────────────────────────────────────────
+function loadVoices() {
+  var all = synth.getVoices();
+  voices = [];
+  for (var i = 0; i < all.length; i++) {
+    if (all[i].lang.indexOf('en') === 0) voices.push(all[i]);
+  }
+  if (voices.length === 0) voices = all;
+  var sel = document.getElementById('voiceSel');
+  sel.innerHTML = '';
+  for (var j = 0; j < voices.length; j++) {
+    var opt = document.createElement('option');
+    opt.value = j;
+    opt.textContent = voices[j].name.replace(/\s*\(.*?\)/g, '').trim() + (voices[j].lang ? ' — ' + voices[j].lang : '');
+    sel.appendChild(opt);
+  }
+  for (var k = 0; k < voices.length; k++) {
+    if (/female|samantha|zira|karen|moira|fiona|victoria/i.test(voices[k].name)) {
+      sel.value = k;
+      break;
+    }
+  }
+}
+if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
+loadVoices();
+setTimeout(loadVoices, 800);
+
+// ─── MEDIA SLOTS ─────────────────────────────────────────────────────────────
+function trigFile(i) {
+  document.getElementById('mf' + i).click();
+}
+
+function loadMedia(e, i) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var url = URL.createObjectURL(file);
+  var isVid = file.type.indexOf('video') === 0;
+  mediaSlots[i] = { url: url, isVid: isVid };
+  renderSlot(i);
+}
+
+function renderSlot(i) {
+  var slot = document.getElementById('ms' + i);
+  var m = mediaSlots[i];
+  if (!m) {
+    slot.className = 'mslot';
+    slot.innerHTML = '<svg width="18" height="18" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span class="mslot-lbl">Scene ' + (i+1) + '</span>';
+    slot.onclick = function() { trigFile(i); };
+    return;
+  }
+  slot.className = 'mslot has';
+  slot.onclick = null;
+  if (m.isVid) {
+    slot.innerHTML = '<video class="mslot-prev" src="' + m.url + '" muted loop autoplay playsinline></video><div class="mslot-tag" style="z-index:2">VID</div><div class="mslot-rm" onclick="rmSlot(event,' + i + ')" style="z-index:3">✕</div>';
+  } else {
+    slot.innerHTML = '<img class="mslot-prev" src="' + m.url + '"><div class="mslot-tag">IMG</div><div class="mslot-rm" onclick="rmSlot(event,' + i + ')">✕</div>';
+  }
+}
+
+function rmSlot(e, i) {
+  e.stopPropagation();
+  mediaSlots[i] = null;
+  document.getElementById('mf' + i).value = '';
+  renderSlot(i);
+}
+
+// ─── SCRIPT HELPERS ───────────────────────────────────────────────────────────
+function onScriptInput() {
+  var v = document.getElementById('scriptBox').value;
+  document.getElementById('charCnt').textContent = v.length + ' chars' + (v.length > 0 ? ' — ready' : '');
+}
+
+function saveHist() {
+  var v = document.getElementById('scriptBox').value.trim();
+  if (v && scriptHistory[scriptHistory.length - 1] !== v) {
+    scriptHistory.push(v);
+    if (scriptHistory.length > 20) scriptHistory.shift();
+  }
+  document.getElementById('undoBtn').disabled = scriptHistory.length < 2;
+}
+
+function undoScript() {
+  if (scriptHistory.length < 2) return;
+  scriptHistory.pop();
+  document.getElementById('scriptBox').value = scriptHistory[scriptHistory.length - 1] || '';
+  onScriptInput();
+  document.getElementById('undoBtn').disabled = scriptHistory.length < 2;
+}
+
+function clearScript() {
+  if (document.getElementById('scriptBox').value && !confirm('Clear the script?')) return;
+  document.getElementById('scriptBox').value = '';
+  scriptHistory = [];
+  onScriptInput();
+  document.getElementById('undoBtn').disabled = true;
+}
+
+function copyScript() {
+  var t = document.getElementById('scriptBox').value;
+  if (!t) return;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(t).then(function() {
+      setPS('Copied to clipboard!', 'done');
+      setTimeout(function() { setPS(''); }, 2000);
+    });
+  } else {
+    document.getElementById('scriptBox').select();
+    document.execCommand('copy');
+    setPS('Copied!', 'done');
+    setTimeout(function() { setPS(''); }, 2000);
+  }
+}
+
+function setPS(msg, cls) {
+  var el = document.getElementById('polishStatus');
+  el.textContent = msg;
+  el.className = 'ps' + (cls ? ' ' + cls : '');
+}
+
+// ─── POLISH ───────────────────────────────────────────────────────────────────
+function togglePb(el) {
+  var key = el.getAttribute('data-pk');
+  var idx = selectedPolishes.indexOf(key);
+  if (idx > -1) {
+    selectedPolishes.splice(idx, 1);
+    el.classList.remove('on');
+  } else {
+    selectedPolishes.push(key);
+    el.classList.add('on');
+  }
+  renderTags();
+  document.getElementById('applyBtn').disabled = selectedPolishes.length === 0;
+}
+
+function renderTags() {
+  var c = document.getElementById('tagRow');
+  if (selectedPolishes.length === 0) {
+    c.innerHTML = '<span style="font-size:10px;color:var(--text3);font-style:italic;">Tap cards above to select</span>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < selectedPolishes.length; i++) {
+    var k = selectedPolishes[i];
+    html += '<div class="tag">' + polishLabels[k] + '<span class="tag-x" onclick="removeTag(\'' + k + '\')">✕</span></div>';
+  }
+  c.innerHTML = html;
+}
+
+function removeTag(key) {
+  var idx = selectedPolishes.indexOf(key);
+  if (idx > -1) selectedPolishes.splice(idx, 1);
+  var el = document.querySelector('[data-pk="' + key + '"]');
+  if (el) el.classList.remove('on');
+  renderTags();
+  document.getElementById('applyBtn').disabled = selectedPolishes.length === 0;
+}
+
+function applyPolish() {
+  var current = document.getElementById('scriptBox').value.trim();
+  if (!current) {
+    setPS('Write or generate a script first!', '');
+    document.getElementById('scriptBox').focus();
+    return;
+  }
+  if (selectedPolishes.length === 0) {
+    setPS('Select at least one polish option above.', '');
+    return;
+  }
+  saveHist();
+  document.getElementById('applyBtn').disabled = true;
+  var pbs = document.querySelectorAll('.pb');
+  for (var i = 0; i < pbs.length; i++) pbs[i].style.pointerEvents = 'none';
+
+  var pbarWrap = document.getElementById('pbarWrap');
+  var pbarFill = document.getElementById('pbarFill');
+  pbarWrap.style.display = 'block';
+  pbarFill.style.width = '0%';
+
+  var list = selectedPolishes.slice();
+  var idx = 0;
+  var working = current;
+
+  function runNext() {
+    if (idx >= list.length) {
+      pbarFill.style.width = '100%';
+      saveHist();
+      setPS(list.length + ' polish' + (list.length > 1 ? 'es' : '') + ' applied! Hit play to hear it.', 'done');
+      setTimeout(function() {
+        setPS('');
+        pbarWrap.style.display = 'none';
+        pbarFill.style.width = '0%';
+      }, 3000);
+      document.getElementById('applyBtn').disabled = selectedPolishes.length === 0;
+      for (var j = 0; j < pbs.length; j++) pbs[j].style.pointerEvents = 'auto';
+      return;
+    }
+    var key = list[idx];
+    var pct = Math.round((idx / list.length) * 100);
+    pbarFill.style.width = pct + '%';
+    setPS('Step ' + (idx + 1) + ' of ' + list.length + ': applying ' + polishLabels[key] + '...', 'working');
+
+    callClaude(
+      'You are an expert TikTok ad copywriter. Return ONLY the rewritten script text with no labels, no preamble, no explanation whatsoever.',
+      polishPrompts[key] + '\n\nScript to rewrite:\n' + working,
+      500,
+      function(result, err) {
+        if (err) {
+          showErr('Polish failed: ' + err);
+          setPS('');
+          pbarWrap.style.display = 'none';
+          document.getElementById('applyBtn').disabled = selectedPolishes.length === 0;
+          for (var j = 0; j < pbs.length; j++) pbs[j].style.pointerEvents = 'auto';
+          return;
+        }
+        working = result;
+        document.getElementById('scriptBox').value = working;
+        onScriptInput();
+        idx++;
+        runNext();
+      }
+    );
+  }
+
+  runNext();
+}
+
+// ─── GENERATE AD ─────────────────────────────────────────────────────────────
+function showErr(msg) {
+  document.getElementById('errMsg').textContent = msg;
+  document.getElementById('errWrap').style.display = 'block';
+  setTimeout(function() { document.getElementById('errWrap').style.display = 'none'; }, 10000);
+}
+
+function generateAd() {
+  var product = document.getElementById('productDesc').value.trim();
+  var name = document.getElementById('productName').value.trim();
+  var audience = document.getElementById('audience').value.trim();
+
+  if (!product && !name) {
+    showErr('Please enter a product name or description first.');
+    return;
+  }
+
+  stopVoice();
+  document.getElementById('errWrap').style.display = 'none';
+  var btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.textContent = 'GENERATING...';
+
+  var screen = document.getElementById('phoneScreen');
+  screen.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;"><div class="pspin"></div></div>';
+  document.getElementById('ttu').style.display = 'none';
+  document.getElementById('pdots').style.display = 'none';
+  document.getElementById('pnum').style.display = 'none';
+  if (sceneTimer) clearInterval(sceneTimer);
+
+  var systemMsg = 'You are a TikTok ad creative director. Respond ONLY with a valid JSON object. No markdown code fences, no explanation, no text before or after the JSON.';
+  var userMsg = 'Create a TikTok product ad.\nProduct name: ' + (name || 'this product') + '\nProduct description: ' + (product || name) + '\nTarget audience: ' + (audience || 'general TikTok users') + '\nAd vibe: ' + adVibe + '\n\nRespond with ONLY this JSON structure:\n{"scenes":[{"tag":"short tag","title":"HEADLINE","body":"1-2 sentences","hasCTA":false},{"tag":"short tag","title":"KEY BENEFIT","body":"description","hasCTA":false},{"tag":"short tag","title":"SOCIAL PROOF","body":"why people love it","hasCTA":false},{"tag":"BUY NOW","title":"CALL TO ACTION","body":"urgency line","hasCTA":true}],"script":"Natural conversational 40-60 word voiceover that sounds like a real person.","hashtags":["tag1","tag2","tag3","tag4","tag5","tag6"]}';
+
+  callClaude(systemMsg, userMsg, 1000, function(result, err) {
+    btn.disabled = false;
+    btn.textContent = 'GENERATE AD';
+
+    if (err) {
+      screen.innerHTML = '<div class="pidle">Generation failed.<br><span style="font-size:10px;opacity:0.5;">See error below</span></div>';
+      showErr('Error: ' + err);
+      return;
+    }
+
+    try {
+      var firstBrace = result.indexOf('{'); var lastBrace = result.lastIndexOf('}'); var clean = (firstBrace > -1 && lastBrace > firstBrace) ? result.slice(firstBrace, lastBrace + 1) : result;
+      var parsed = JSON.parse(clean);
+
+      if (!parsed.scenes || parsed.scenes.length === 0) {
+        throw new Error('No scenes in response');
+      }
+
+      scenes = parsed.scenes;
+      renderPhone();
+
+      saveHist();
+      document.getElementById('scriptBox').value = parsed.script || '';
+      onScriptInput();
+      saveHist();
+
+      if (parsed.hashtags && parsed.hashtags.length) {
+        var html = '';
+        for (var i = 0; i < parsed.hashtags.length; i++) {
+          html += '<div class="htag">#' + parsed.hashtags[i].replace(/^#/, '') + '</div>';
+        }
+        document.getElementById('hashTags').innerHTML = html;
+        document.getElementById('hashWrap').style.display = 'block';
+      }
+
+      document.getElementById('exportBtn').disabled = false;
+      document.getElementById('voiceStat').textContent = 'Ready! Polish your script or hit Play.';
+      setPS('Tip: select polish options above to make your script sound more human.');
+      loadVoices();
+
+    } catch (e) {
+      screen.innerHTML = '<div class="pidle">Could not read response.<br><span style="font-size:10px;opacity:0.5;">Try again</span></div>';
+      showErr('Parse error: ' + e.message + ' | Raw: ' + result.slice(0, 100));
+    }
+  });
+}
+
+// ─── PHONE PREVIEW ────────────────────────────────────────────────────────────
+function renderPhone() {
+  var screen = document.getElementById('phoneScreen');
+  var bgColor = bgColors[adVibe] || '#1a0a2e';
+  screen.innerHTML = '';
+  curScene = 0;
+
+  for (var i = 0; i < scenes.length; i++) {
+    var s = scenes[i];
+    var m = mediaSlots[i];
+    var div = document.createElement('div');
+    div.className = 'pscene' + (i === 0 ? ' on' : '');
+    div.id = 'ps' + i;
+
+    var bgHTML = '';
+    if (m) {
+      if (m.isVid) {
+        bgHTML = '<video class="pscene-img" src="' + m.url + '" muted loop autoplay playsinline></video>';
+      } else {
+        bgHTML = '<img class="pscene-img" src="' + m.url + '">';
+      }
+    } else {
+      bgHTML = '<div class="pscene-bg" style="background:' + bgColor + ';"></div>';
+    }
+
+    var ctaHTML = s.hasCTA ? '<div class="pscene-cta">SHOP NOW →</div>' : '';
+
+    div.innerHTML = bgHTML +
+      '<div class="pscene-ov"></div>' +
+      '<div class="pscene-cnt">' +
+        '<div class="pscene-tag">' + s.tag + '</div>' +
+        '<div class="pscene-title">' + s.title + '</div>' +
+        '<div class="pscene-body">' + s.body + '</div>' +
+        ctaHTML +
+      '</div>';
+
+    screen.appendChild(div);
+  }
+
+  var dots = document.getElementById('pdots');
+  dots.innerHTML = '';
+  for (var j = 0; j < scenes.length; j++) {
+    var dot = document.createElement('div');
+    dot.className = 'pdot' + (j === 0 ? ' on' : '');
+    dot.id = 'pd' + j;
+    dots.appendChild(dot);
+  }
+  dots.style.display = 'flex';
+  document.getElementById('ttu').style.display = 'flex';
+  document.getElementById('pnum').style.display = 'block';
+  updateNum();
+
+  if (sceneTimer) clearInterval(sceneTimer);
+  sceneTimer = setInterval(nextScene, 2800);
+}
+
+function nextScene() {
+  var prev = curScene;
+  curScene = (curScene + 1) % scenes.length;
+  document.getElementById('ps' + prev).classList.remove('on');
+  document.getElementById('ps' + curScene).classList.add('on');
+  document.getElementById('pd' + prev).classList.remove('on');
+  document.getElementById('pd' + curScene).classList.add('on');
+  updateNum();
+}
+
+function updateNum() {
+  document.getElementById('pnum').textContent = (curScene + 1) + ' / ' + scenes.length;
+}
+
+// ─── VOICE ────────────────────────────────────────────────────────────────────
+function playVoice() {
+  var script = document.getElementById('scriptBox').value.trim();
+  if (!script) {
+    document.getElementById('voiceStat').textContent = 'Type or generate a script first!';
+    return;
+  }
+  stopVoice();
+  var utt = new SpeechSynthesisUtterance(script);
+  var sel = document.getElementById('voiceSel');
+  if (voices.length && sel.value !== '') utt.voice = voices[parseInt(sel.value)];
+  utt.rate = parseFloat(document.getElementById('rateSlider').value);
+  utt.pitch = parseFloat(document.getElementById('pitchSlider').value);
+  utt.onstart = function() {
+    document.getElementById('wfWrap').style.display = 'block';
+    document.getElementById('playBtn').style.display = 'none';
+    document.getElementById('stopBtn').style.display = 'flex';
+    document.getElementById('voiceStat').textContent = 'Speaking...';
+  };
+  utt.onend = function() {
+    document.getElementById('wfWrap').style.display = 'none';
+    document.getElementById('playBtn').style.display = 'flex';
+    document.getElementById('stopBtn').style.display = 'none';
+    document.getElementById('voiceStat').textContent = 'Done! Polish and replay anytime.';
+  };
+  utt.onerror = function() {
+    document.getElementById('wfWrap').style.display = 'none';
+    document.getElementById('playBtn').style.display = 'flex';
+    document.getElementById('stopBtn').style.display = 'none';
+  };
+  synth.speak(utt);
+}
+
+function stopVoice() {
+  synth.cancel();
+  document.getElementById('wfWrap').style.display = 'none';
+  document.getElementById('playBtn').style.display = 'flex';
+  document.getElementById('stopBtn').style.display = 'none';
+}
+
+// ─── EXPORT ───────────────────────────────────────────────────────────────────
+function exportVideo() {
+  if (!scenes.length) {
+    document.getElementById('voiceStat').textContent = 'Generate an ad first!';
+    return;
+  }
+
+  var btn = document.getElementById('exportBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin-red"></span> Exporting...';
+
+  var epWrap = document.getElementById('epWrap');
+  var epFill = document.getElementById('epFill');
+  epWrap.style.display = 'block';
+  epFill.style.width = '0%';
+
+  var canvas = document.createElement('canvas');
+  canvas.width = 390;
+  canvas.height = 780;
+  var ctx = canvas.getContext('2d');
+
+  var mime = 'video/webm';
+  if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) mime = 'video/webm;codecs=vp9';
+
+  var chunks = [];
+  var stream = canvas.captureStream(30);
+  var mr = new MediaRecorder(stream, { mimeType: mime });
+  mr.ondataavailable = function(e) { if (e.data.size > 0) chunks.push(e.data); };
+
+  var bgColor = bgColors[adVibe] || '#1a0a2e';
+  var sceneIdx = 0;
+  var sceneStart = null;
+  var sceneDuration = 2800;
+
+  mr.start(100);
+
+  function loadImg(src) {
+    return new Promise(function(res, rej) {
+      var img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = function() { res(img); };
+      img.onerror = rej;
+      img.src = src;
+    });
+  }
+
+  function drawScene(s, img) {
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, 390, 780);
+    if (img) {
+      var iw = img.width, ih = img.height, cw = 390, ch = 780;
+      var ir = iw / ih, cr = cw / ch;
+      var sw, sh, sx, sy;
+      if (ir > cr) { sh = ih; sw = ih * cr; sx = (iw - sw) / 2; sy = 0; }
+      else { sw = iw; sh = iw / cr; sx = 0; sy = (ih - sh) / 2; }
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, 390, 780);
+    }
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.fillRect(0, 0, 390, 780);
+    ctx.fillStyle = '#ff2d55';
+    ctx.fillRect(22, 550, 70, 3);
+    ctx.font = 'bold 12px DM Sans, sans-serif';
+    ctx.fillStyle = '#ff2d55';
+    ctx.fillText(s.tag.toUpperCase(), 22, 566);
+    ctx.font = 'bold 46px Bebas Neue, sans-serif';
+    ctx.fillStyle = '#ffffff';
+    var words = s.title.split(' ');
+    var line = '', ly = 610;
+    for (var i = 0; i < words.length; i++) {
+      var test = line + words[i] + ' ';
+      if (ctx.measureText(test).width > 346 && line) {
+        ctx.fillText(line.trim(), 22, ly);
+        line = words[i] + ' ';
+        ly += 50;
+      } else { line = test; }
+    }
+    ctx.fillText(line.trim(), 22, ly);
+    ctx.font = '14px DM Sans, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    ctx.fillText(s.body.slice(0, 60), 22, ly + 28);
+    if (s.hasCTA) {
+      ctx.fillStyle = '#ff2d55';
+      ctx.beginPath();
+      ctx.roundRect(22, ly + 46, 120, 30, 15);
+      ctx.fill();
+      ctx.font = 'bold 12px DM Sans, sans-serif';
+      ctx.fillStyle = '#fff';
+      ctx.fillText('SHOP NOW →', 35, ly + 65);
+    }
+  }
+
+  function step(ts) {
+    if (!sceneStart) sceneStart = ts;
+    var elapsed = ts - sceneStart;
+    if (elapsed >= sceneDuration) {
+      sceneIdx++;
+      sceneStart = ts;
+      epFill.style.width = Math.round((sceneIdx / scenes.length) * 90) + '%';
+      if (sceneIdx >= scenes.length) {
+        mr.stop();
+        mr.onstop = function() {
+          epFill.style.width = '100%';
+          var blob = new Blob(chunks, { type: 'video/webm' });
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = 'tiktok-ad.webm';
+          a.click();
+          URL.revokeObjectURL(url);
+          epWrap.style.display = 'none';
+          btn.disabled = false;
+          btn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export as video (.webm)';
+          document.getElementById('voiceStat').textContent = 'Video downloaded!';
+        };
+        return;
+      }
+    }
+    if (sceneIdx < scenes.length) {
+      var m = mediaSlots[sceneIdx];
+      if (m && !m.isVid && m.url) {
+        loadImg(m.url).then(function(img) { drawScene(scenes[sceneIdx], img); }).catch(function() { drawScene(scenes[sceneIdx], null); });
+      } else {
+        drawScene(scenes[sceneIdx], null);
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  requestAnimationFrame(step);
+}
+</script>
+</body>
+</html>
